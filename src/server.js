@@ -5,11 +5,12 @@ const agentRoutes = require('./routes/agentRoutes');
 
 const app = express();
 
-const allowedOrigins = [process.env.CORS_ORIGIN];
+// 👇 Parse the allowed origins
+const allowedOrigins = process.env.CORS_ORIGIN.split(',');
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
+    // Allow undefined origins (like curl/Postman) or match the whitelist
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -19,7 +20,7 @@ const corsOptions = {
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true // allow cookies if needed
+  credentials: true
 };
 
 app.use(cors(corsOptions));
