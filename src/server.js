@@ -25,7 +25,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-app.use('/api', agentRoutes);
+app.use('/', agentRoutes);
 
 const PORT = process.env.PORT || 4000;
 
