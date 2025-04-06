@@ -5,14 +5,24 @@ const agentRoutes = require('./routes/agentRoutes');
 
 const app = express();
 
-// CORS configuration
+const allowedOrigins = [process.env.CORS_ORIGIN];
+
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN, // Allow requests from the frontend running on port 5173
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
-  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.error('Blocked by CORS:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true // allow cookies if needed
 };
 
-app.use(cors(corsOptions)); // Apply CORS middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use('/api', agentRoutes);
 
